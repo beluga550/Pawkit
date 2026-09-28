@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "pawkit",
+  "productName": "Pawkit",
   "version": "0.1.0",
-  "identifier": "com.puss_cat.pawkit",
+  "identifier": "com.beluga550.pawkit",
   "build": {
     "frontendDist": "../src"
   },
@@ -10,9 +10,11 @@
     "withGlobalTauri": true,
     "windows": [
       {
-        "title": "pawkit",
-        "width": 800,
-        "height": 600
+        "title": "Pawkit · 服务器控制台",
+        "width": 1100,
+        "height": 760,
+        "minWidth": 760,
+        "minHeight": 600
       }
     ],
     "security": {
@@ -21,7 +23,8 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "useLocalToolsDir": true,
+    "targets": ["nsis"],
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",
