@@ -63,7 +63,7 @@ pub struct CoordinateTeleport {
 }
 
 fn validate_profile(profile: &ConnectionProfile) -> Result<(), AppError> {
-    if profile.name.trim().is_empty() || profile.name.len() > 60 {
+    if profile.name.trim().is_empty() || profile.name.chars().count() > 60 {
         return Err(AppError::new(
             "invalid_input",
             "请输入不超过 60 个字符的服务器名称",
@@ -350,6 +350,17 @@ mod tests {
             coordinate_teleport_command(&to_coords).unwrap(),
             "execute in minecraft:overworld run tp Steve 12.5 64 -30"
         );
+    }
+
+    #[test]
+    fn server_name_limit_counts_characters_not_bytes() {
+        let profile = |name: String| ConnectionProfile {
+            name,
+            host: "127.0.0.1".into(),
+            port: 25575,
+        };
+        assert!(validate_profile(&profile("服".repeat(60))).is_ok());
+        assert!(validate_profile(&profile("服".repeat(61))).is_err());
     }
 
     #[test]
