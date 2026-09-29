@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>Pawkit · 精修深色 v2</title>
+<style>
+  :root {
+    --bg: #060b0e;
+    --s1: #0a1216;
+    --s2: #0d171b;
+    --card: #111e23;
+    --card-hi: #16262d;
+    --line: rgba(255,255,255,.055);
+    --line-2: rgba(255,255,255,.1);
+    --text: #e8f3ef;
+    --text-2: #9fb5ad;
+    --text-3: #66807a;
+    --mint: #8ee6be;
+    --mint-2: #4fcf97;
+    --mint-glow: rgba(142,230,190,.16);
+    --amber: #f3c56e;
+    --coral: #ff8f7e;
+    --over: #7fdc8f;
+    --nether: #ff7152;
+    --end: #b893ff;
+    --radius: 14px;
+    --ui: "Segoe UI Variable Text","Segoe UI","Microsoft YaHei UI","PingFang SC",system-ui,sans-serif;
+    --display: "Segoe UI Variable Display","Segoe UI","Microsoft YaHei UI",system-ui,sans-serif;
+    --mono: "Cascadia Code","Cascadia Mono",Consolas,monospace;
+  }
+  * { box-sizing: border-box; margin: 0; }
+  html, body { background: #03070a; }
+  body { font-family: var(--ui); color: var(--text); padding: 28px; min-width: 1180px; }
+  .caption { max-width: 1240px; margin: 0 auto 16px; color: #8aa39a; font-size: 13px; line-height: 1.6; }
+  .caption b { color: #e8f3ef; }
+  svg.i { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+
+  /* window */
+  .window { max-width: 1240px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 1px solid #1b2a30;
+            box-shadow: 0 40px 80px -20px rgba(0,0,0,.7), 0 0 0 1px rgba(0,0,0,.4); }
+  .titlebar { height: 34px; background: #080f12; display: flex; align-items: center; padding: 0 12px; gap: 8px; font-size: 12px; color: #7d948c; border-bottom: 1px solid var(--line); }
+  .titlebar .ctl { margin-left: auto; display: flex; gap: 22px; color: #5c736b; letter-spacing: 2px; }
+  .app { display: grid; grid-template-columns: 232px 1fr 336px; height: 720px;
+         background:
+           radial-gradient(900px 420px at 18% -10%, rgba(142,230,190,.08), transparent 60%),
+           radial-gradient(700px 400px at 100% 110%, rgba(184,147,255,.06), transparent 60%),
+           var(--s2); position: relative; }
+  .app::before { content: ""; position: absolute; inset: 0; pointer-events: none;
+                 background-image: linear-gradient(var(--line) 1px, transparent 1px), linear-gradient(90deg, var(--line) 1px, transparent 1px);
+                 background-size: 32px 32px; opacity: .35; mask-image: radial-gradient(800px 500px at 40% 0%, #000, transparent 75%); }
+
+  /* sidebar */
+  .side { background: linear-gradient(180deg, rgba(10,18,22,.92), rgba(8,14,17,.96)); border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 18px; position: relative; z-index: 1; }
+  .brand { display: flex; align-items: center; gap: 11px; padding: 2px 6px; }
+  .logo { width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: #06231a;
+          background: linear-gradient(145deg, #b9f5d9, #5fd3a0); box-shadow: 0 6px 18px -6px rgba(95,211,160,.6), inset 0 1px 0 rgba(255,255,255,.5); }
+  .logo svg { width: 22px; height: 22px; fill: currentColor; }
+  .brand strong { font-family: var(--display); font-size: 17px; letter-spacing: .01em; display: block; }
+  .brand small { color: var(--text-3); font-size: 11.5px; }
+  .server { background: linear-gradient(180deg, var(--card-hi), var(--card)); border: 1px solid var(--line-2); border-radius: 12px; padding: 12px; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
+  .server .name { font-weight: 650; font-size: 13.5px; display: flex; align-items: center; justify-content: space-between; }
+  .server .addr { font-family: var(--mono); font-size: 11.5px; color: var(--text-3); margin-top: 3px; }
+  .live { display: inline-flex; align-items: center; gap: 7px; font-size: 11.5px; color: var(--mint); margin-top: 10px; }
+  .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--mint); box-shadow: 0 0 0 0 rgba(142,230,190,.6); animation: pulse 2.2s infinite; }
+  @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(142,230,190,.55) } 70% { box-shadow: 0 0 0 8px rgba(142,230,190,0) } 100% { box-shadow: 0 0 0 0 rgba(142,230,190,0) } }
+  .navlabel { font-size: 10.5px; letter-spacing: .14em; color: var(--text-3); padding: 0 8px; margin-bottom: -10px; }
+  nav { display: flex; flex-direction: column; gap: 2px; }
+  .nav { display: flex; align-items: center; gap: 11px; padding: 9px 10px; border-radius: 10px; color: var(--text-2); font-size: 13.5px; cursor: default; transition: background .15s, color .15s; position: relative; }
+  .nav:hover { background: rgba(255,255,255,.035); color: var(--text); }
+  .nav.on { background: linear-gradient(90deg, rgba(142,230,190,.13), rgba(142,230,190,.04)); color: #d9fbeb; }
+  .nav.on::before { content: ""; position: absolute; left: -14px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--mint); }
+  .nav .badge { margin-left: auto; font-size: 11px; font-variant-numeric: tabular-nums; color: var(--text-3); background: rgba(255,255,255,.05); border-radius: 999px; padding: 1px 8px; }
+  .nav.on .badge { color: #06231a; background: var(--mint); }
+  .nav.soon { opacity: .5; }
+  .nav .soon-tag { margin-left: auto; font-size: 10.5px; color: var(--text-3); border: 1px dashed var(--line-2); border-radius: 999px; padding: 0 7px; }
+  .sep { height: 1px; background: var(--line); margin: 2px 8px; }
+  .side .foot { margin-top: auto; display: flex; align-items: center; gap: 9px; padding: 9px 10px; border-radius: 10px; color: var(--text-3); font-size: 13px; border: 1px solid var(--line); }
+  .side .foot:hover { color: var(--coral); border-color: rgba(255,143,126,.3); }
+
+  /* main */
+  .main { padding: 26px 28px; display: flex; flex-direction: column; gap: 18px; min-width: 0; position: relative; z-index: 1; }
+  .head { display: flex; align-items: flex-end; justify-content: space-between; }
+  .kicker { font-size: 11px; letter-spacing: .18em; color: var(--mint); font-weight: 700; }
+  h1 { font-family: var(--display); font-size: 28px; font-weight: 700; letter-spacing: -.01em; margin-top: 4px; display: flex; align-items: baseline; gap: 12px; }
+  h1 .count { font-size: 15px; font-weight: 600; color: var(--text-3); font-variant-numeric: tabular-nums; }
+  h1 .count b { color: var(--text); }
+  .sub { color: var(--text-3); font-size: 12.5px; margin-top: 4px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 0 14px; border-radius: 10px; font-size: 13px; font-weight: 600; border: 1px solid transparent; cursor: default; transition: transform .12s, background .15s, border-color .15s, box-shadow .15s; white-space: nowrap; }
+  .btn:active { transform: translateY(1px); }
+  .btn.ghost { background: rgba(255,255,255,.03); border-color: var(--line-2); color: var(--text-2); }
+  .btn.ghost:hover { background: rgba(255,255,255,.06); color: var(--text); }
+  .btn.primary { background: linear-gradient(180deg, #a6efcd, #74dcae); color: #05231a; box-shadow: 0 8px 20px -10px rgba(116,220,174,.8), inset 0 1px 0 rgba(255,255,255,.45); }
+  .btn.primary:hover { box-shadow: 0 10px 26px -10px rgba(116,220,174,.95), inset 0 1px 0 rgba(255,255,255,.45); }
+  .btn.icon { width: 36px; padding: 0; }
+  .actions { display: flex; gap: 8px; }
+
+  .composer { display: flex; align-items: center; gap: 12px; background: linear-gradient(180deg, var(--card-hi), var(--card)); border: 1px solid var(--line-2); border-radius: 14px; padding: 7px 7px 7px 16px; box-shadow: inset 0 1px 0 rgba(255,255,255,.04); transition: border-color .15s, box-shadow .15s; }
+  .composer:hover { border-color: rgba(142,230,190,.35); box-shadow: 0 0 0 4px var(--mint-glow); }
+  .composer .ic { color: var(--mint); }
+  .composer .ph { flex: 1; color: var(--text-3); font-size: 13.5px; }
+  .composer .ctr { font-family: var(--mono); font-size: 11px; color: var(--text-3); }
+
+  .grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 12px; }
+  .pcard { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: var(--radius); background: linear-gradient(180deg, var(--card-hi), var(--card)); border: 1px solid var(--line); box-shadow: inset 0 1px 0 rgba(255,255,255,.035); transition: transform .15s, border-color .15s, box-shadow .15s; cursor: default; }
+  .pcard:hover { transform: translateY(-2px); border-color: var(--line-2); box-shadow: 0 12px 24px -16px rgba(0,0,0,.8), inset 0 1px 0 rgba(255,255,255,.05); }
+  .pcard.sel { border-color: rgba(142,230,190,.55); box-shadow: 0 0 0 4px var(--mint-glow), inset 0 1px 0 rgba(255,255,255,.05); }
+  .head8 { width: 42px; height: 42px; border-radius: 10px; overflow: hidden; flex-shrink: 0; image-rendering: pixelated; box-shadow: 0 0 0 1px rgba(255,255,255,.08), 0 6px 14px -8px rgba(0,0,0,.9); }
+  .pcard .nm { font-weight: 650; font-size: 14px; }
+  .pcard .st { display: flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text-3); margin-top: 2px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--mint); }
+  .pcard .more { margin-left: auto; color: var(--text-3); opacity: 0; transition: opacity .15s; }
+  .pcard:hover .more, .pcard.sel .more { opacity: 1; }
+  .pcard.add { border-style: dashed; background: transparent; color: var(--text-3); justify-content: center; font-size: 13px; }
+
+  .panel { background: rgba(17,30,35,.6); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px 16px; }
+  .panel h3 { font-size: 12px; letter-spacing: .14em; color: var(--text-3); font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 8px; }
+  .panel h3 a { color: var(--mint); letter-spacing: 0; font-weight: 600; }
+  .log { display: grid; grid-template-columns: 56px 1fr auto; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); font-size: 13px; }
+  .log:first-of-type { border-top: 0; }
+  .log time { font-family: var(--mono); font-size: 11.5px; color: var(--text-3); }
+  .log .what { color: var(--text-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .log .what b { color: var(--text); font-weight: 600; }
+  .tag { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 2px 9px; border-radius: 999px; font-weight: 600; }
+  .tag svg { width: 12px; height: 12px; }
+  .tag.ok { color: var(--mint); background: rgba(142,230,190,.1); }
+  .tag.unk { color: var(--amber); background: rgba(243,197,110,.1); }
+
+  /* drawer */
+  .drawer { background: linear-gradient(180deg, rgba(14,25,30,.97), rgba(11,20,24,.98)); border-left: 1px solid var(--line-2); padding: 22px 20px; display: flex; flex-direction: column; gap: 18px; position: relative; z-index: 1; box-shadow: -24px 0 48px -24px rgba(0,0,0,.7); }
+  .dh { display: flex; align-items: center; gap: 14px; }
+  .dh .head8 { width: 54px; height: 54px; border-radius: 13px; }
+  .dh .nm { font-family: var(--display); font-size: 20px; font-weight: 700; }
+  .dh .st { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--mint); margin-top: 2px; }
+  .dh .x { margin-left: auto; align-self: flex-start; color: var(--text-3); }
+  .sec { display: flex; flex-direction: column; gap: 10px; }
+  .sec > .t { font-size: 11px; letter-spacing: .16em; color: var(--text-3); font-weight: 700; display: flex; align-items: center; justify-content: space-between; }
+  .seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; background: rgba(0,0,0,.25); border: 1px solid var(--line); border-radius: 11px; padding: 3px; }
+  .seg span { text-align: center; padding: 7px 0; border-radius: 8px; font-size: 12.5px; color: var(--text-2); }
+  .seg span.on { background: var(--card-hi); color: var(--text); box-shadow: 0 1px 0 rgba(255,255,255,.06) inset, 0 4px 10px -6px rgba(0,0,0,.8); }
+  .dims { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .dim { border-radius: 11px; padding: 10px 8px 9px; text-align: center; font-size: 12.5px; border: 1px solid var(--line); background: rgba(255,255,255,.02); color: var(--text-2); position: relative; overflow: hidden; }
+  .dim i { display: block; width: 22px; height: 22px; margin: 0 auto 6px; border-radius: 6px; }
+  .dim.over i { background: linear-gradient(180deg, #7fdc8f 0 40%, #7a5536 40%); }
+  .dim.neth i { background: linear-gradient(135deg, #ff7152, #8e1d1d); }
+  .dim.end i { background: radial-gradient(circle at 50% 45%, #1a0f2b 28%, #e9e3b4 30% 48%, #b893ff 50%); }
+  .dim.on { color: var(--text); }
+  .dim.neth.on { border-color: rgba(255,113,82,.55); background: linear-gradient(180deg, rgba(255,113,82,.14), rgba(255,113,82,.03)); box-shadow: 0 0 0 3px rgba(255,113,82,.1); }
+  .xyz { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .fld { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,.25); border: 1px solid var(--line-2); border-radius: 10px; padding: 0 10px; height: 38px; }
+  .fld em { font-style: normal; font-size: 11px; font-weight: 700; color: var(--text-3); }
+  .fld span { font-family: var(--mono); font-size: 13px; color: var(--text); }
+  .fld.full { width: 100%; }
+  .fld.full span { font-family: var(--ui); color: var(--text-3); font-size: 12.5px; }
+  .tpgo { width: 100%; height: 40px; }
+  .tpgo small { font-weight: 500; opacity: .7; font-family: var(--mono); }
+  .modes { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .mode { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 0 9px; border-radius: 11px; border: 1px solid var(--line); background: rgba(255,255,255,.02); font-size: 12px; color: var(--text-2); transition: border-color .15s, background .15s, color .15s; }
+  .mode:hover { border-color: var(--line-2); background: rgba(255,255,255,.05); color: var(--text); }
+  .mode svg { width: 18px; height: 18px; }
+  .danger { border: 1px solid rgba(255,143,126,.16); background: linear-gradient(180deg, rgba(255,143,126,.06), rgba(255,143,126,.015)); border-radius: 13px; padding: 12px; display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+  .danger .t { color: #e0a79d; }
+  .drow { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+  .btn.warn { background: rgba(243,197,110,.08); color: var(--amber); border-color: rgba(243,197,110,.25); height: 34px; font-size: 12.5px; }
+  .btn.bad { background: rgba(255,143,126,.1); color: var(--coral); border-color: rgba(255,143,126,.3); height: 34px; font-size: 12.5px; }
+  .btn.bad.solid { background: linear-gradient(180deg, #ff9d8e, #f07a67); color: #2b0b06; border-color: transparent; }
+  .hint { font-size: 11.5px; color: var(--text-3); line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <symbol id="paw" viewBox="0 0 24 24"><ellipse cx="6.2" cy="9.2" rx="2.1" ry="2.7"/><ellipse cx="10" cy="5.4" rx="2.1" ry="2.7"/><ellipse cx="14.8" cy="5.4" rx="2.1" ry="2.7"/><ellipse cx="18.4" cy="9.4" rx="2.1" ry="2.7"/><path d="M12.4 11.2c-3.3 0-6.4 3.3-6.4 6.2 0 1.8 1.4 2.8 3 2.8 1.4 0 2.1-.8 3.4-.8s2 .8 3.4.8c1.6 0 3-1 3-2.8 0-2.9-3.1-6.2-6.4-6.2z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="m5.3 5.3 13.4 13.4"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M12 7v5l4 2"/></symbol>
+    <symbol id="i-map" viewBox="0 0 24 24"><polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21"/><path d="M9 3v15"/><path d="M15 6v15"/></symbol>
+    <symbol id="i-mega" viewBox="0 0 24 24"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></symbol>
+    <symbol id="i-refresh" viewBox="0 0 24 24"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24"><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="i-out" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/></symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14"/><path d="M5 12h14"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M2.5 12h19"/><path d="M12 2.5a14.5 14.5 0 0 1 0 19 14.5 14.5 0 0 1 0-19z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><path d="M12 8v4"/><path d="M12 16h.01"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></symbol>
+    <symbol id="i-nav" viewBox="0 0 24 24"><polygon points="3 11 22 2 13 21 11 13 3 11"/></symbol>
+    <!-- 8x8 pixel head; colours come from CSS custom properties on the <svg> -->
+    <symbol id="head" viewBox="0 0 8 8" shape-rendering="crispEdges">
+      <rect width="8" height="8" style="fill:var(--skin)"/>
+      <rect width="8" height="2" style="fill:var(--hair)"/>
+      <rect y="2" width="1" height="1" style="fill:var(--hair)"/><rect x="7" y="2" width="1" height="1" style="fill:var(--hair)"/>
+      <rect x="1" y="4" width="1" height="1" fill="#fff"/><rect x="2" y="4" width="1" height="1" style="fill:var(--eye)"/>
+      <rect x="5" y="4" width="1" height="1" style="fill:var(--eye)"/><rect x="6" y="4" width="1" height="1" fill="#fff"/>
+      <rect x="3" y="5" width="2" height="1" style="fill:var(--shade)"/>
+      <rect x="2" y="6" width="4" height="1" style="fill:var(--mouth)"/>
+    </symbol>
+  </defs>
+</svg>
+
+<p class="caption"><b>精修深色 v2</b> · 高保真示意，可以把鼠标移到卡片、按钮、广播框上看悬停效果。头像是占位的像素头（是否换成真实皮肤头像稍后单独问）。维度按钮各有颜色：主世界绿、下界红、末地紫，这是唯一的 MC 元素点缀。</p>
+
+<div class="window">
+  <div class="titlebar"><svg class="i" style="width:14px;height:14px;fill:#8ee6be;stroke:none"><use href="#paw"/></svg>Pawkit · 服务器控制台<span class="ctl">—　☐　✕</span></div>
+  <div class="app">
+
+    <!-- sidebar -->
+    <aside class="side">
+      <div class="brand"><div class="logo"><svg><use href="#paw"/></svg></div><div><strong>Pawkit</strong><small>服务器控制台</small></div></div>
+      <div class="server">
+        <div class="name">生存一服</div>
+        <div class="addr">192.168.1.10:25575</div>
+        <div class="live"><span class="pulse"></span>已连接 · 12 秒前刷新</div>
+      </div>
+      <div class="navlabel">管理</div>
+      <nav>
+        <div class="nav on"><svg class="i"><use href="#i-users"/></svg>玩家<span class="badge">4</span></div>
+        <div class="nav"><svg class="i"><use href="#i-ban"/></svg>封禁名单<span class="badge">2</span></div>
+        <div class="nav"><svg class="i"><use href="#i-shield"/></svg>白名单<span class="badge">开</span></div>
+        <div class="nav"><svg class="i"><use href="#i-history"/></svg>今日记录<span class="badge">7</span></div>
+        <div class="sep"></div>
+        <div class="nav soon"><svg class="i"><use href="#i-map"/></svg>地图<span class="soon-tag">即将推出</span></div>
+      </nav>
+      <div class="foot"><svg class="i"><use href="#i-out"/></svg>断开连接</div>
+    </aside>
+
+    <!-- main -->
+    <main class="main">
+      <div class="head">
+        <div>
+          <div class="kicker">PLAYERS</div>
+          <h1>在线玩家 <span class="count"><b>4</b> / 20</span></h1>
+          <div class="sub">每 15 秒自动刷新 · 点选玩家后在右侧操作</div>
+        </div>
+        <div class="actions">
+          <span class="btn ghost"><svg class="i" style="width:16px;height:16px"><use href="#i-plus"/></svg>输入玩家名</span>
+          <span class="btn ghost icon" title="刷新"><svg class="i" style="width:16px;height:16px"><use href="#i-refresh"/></svg></span>
+        </div>
+      </div>
+
+      <div class="composer">
+        <svg class="i ic"><use href="#i-mega"/></svg>
+        <span class="ph">向全服发送一条广播…</span>
+        <span class="ctr">0 / 256</span>
+        <span class="btn primary"><svg class="i" style="width:15px;height:15px"><use href="#i-send"/></svg>发送</span>
+      </div>
+
+      <div class="grid">
+        <div class="pcard sel">
+          <svg class="head8" style="--skin:#c69276;--hair:#3b2718;--eye:#4a3a8c;--shade:#9c6a52;--mouth:#6b3e2a"><use href="#head"/></svg>
+          <div><div class="nm">Steve</div><div class="st"><span class="dot"></span>在线</div></div>
+          <svg class="i more"><use href="#i-dots"/></svg>
+        </div>
+        <div class="pcard">
+          <svg class="head8" style="--skin:#f0c8a0;--hair:#d9832e;--eye:#2f7a3d;--shade:#d9a47e;--mouth:#b56a4a"><use href="#head"/></svg>
+          <div><div class="nm">Alex</div><div class="st"><span class="dot"></span>在线</div></div>
+          <svg class="i more"><use href="#i-dots"/></svg>
+        </div>
+        <div class="pcard">
+          <svg class="head8" style="--skin:#e8b894;--hair:#1c1c24;--eye:#1c1c24;--shade:#c9957a;--mouth:#8a4a3a"><use href="#head"/></svg>
+          <div><div class="nm">Notch_01</div><div class="st"><span class="dot"></span>在线</div></div>
+          <svg class="i more"><use href="#i-dots"/></svg>
+        </div>
+        <div class="pcard">
+          <svg class="head8" style="--skin:#b98b6e;--hair:#e6e2d6;--eye:#3a6ea8;--shade:#946a54;--mouth:#6a3f30"><use href="#head"/></svg>
+          <div><div class="nm">Kai_Builds</div><div class="st"><span class="dot"></span>在线</div></div>
+          <svg class="i more"><use href="#i-dots"/></svg>
+        </div>
+        <div class="pcard add"><svg class="i" style="width:16px;height:16px"><use href="#i-plus"/></svg>对不在线的玩家操作</div>
+      </div>
+
+      <div class="panel">
+        <h3>最近操作 <a>查看全部 →</a></h3>
+        <div class="log"><time>19:42</time><span class="what">传送 <b>Steve</b> → 下界 (120, 64, −30)</span><span class="tag ok"><svg class="i"><use href="#i-check"/></svg>服务器已回复</span></div>
+        <div class="log"><time>19:40</time><span class="what">广播 <b>“今晚 8 点开活动，记得上线！”</b></span><span class="tag ok"><svg class="i"><use href="#i-check"/></svg>服务器已回复</span></div>
+        <div class="log"><time>19:31</time><span class="what">踢出 <b>Griefer99</b> · 原因：恶意破坏</span><span class="tag unk"><svg class="i"><use href="#i-alert"/></svg>结果未知</span></div>
+      </div>
+    </main>
+
+    <!-- drawer -->
+    <aside class="drawer">
+      <div class="dh">
+        <svg class="head8" style="--skin:#c69276;--hair:#3b2718;--eye:#4a3a8c;--shade:#9c6a52;--mouth:#6b3e2a"><use href="#head"/></svg>
+        <div><div class="nm">Steve</div><div class="st"><span class="dot"></span>在线</div></div>
+        <svg class="i x"><use href="#i-x"/></svg>
+      </div>
+
+      <div class="sec">
+        <div class="t">传送</div>
+        <div class="seg"><span>到玩家</span><span class="on">到坐标</span></div>
+        <div class="dims">
+          <div class="dim over"><i></i>主世界</div>
+          <div class="dim neth on"><i></i>下界</div>
+          <div class="dim end"><i></i>末地</div>
+        </div>
+        <div class="xyz">
+          <div class="fld"><em>X</em><span>120</span></div>
+          <div class="fld"><em>Y</em><span>64</span></div>
+          <div class="fld"><em>Z</em><span>−30</span></div>
+        </div>
+        <span class="btn primary tpgo"><svg class="i" style="width:15px;height:15px"><use href="#i-nav"/></svg>传送到下界 <small>120, 64, −30</small></span>
+      </div>
+
+      <div class="sec">
+        <div class="t">游戏模式 <span style="letter-spacing:0;font-weight:500">执行前确认</span></div>
+        <div class="modes">
+          <div class="mode"><svg class="i"><use href="#i-heart"/></svg>生存</div>
+          <div class="mode"><svg class="i"><use href="#i-box"/></svg>创造</div>
+          <div class="mode"><svg class="i"><use href="#i-compass"/></svg>冒险</div>
+          <div class="mode"><svg class="i"><use href="#i-eye"/></svg>旁观</div>
+        </div>
+      </div>
+
+      <div class="danger">
+        <div class="sec" style="gap:10px">
+          <div class="t">管理操作</div>
+          <div class="fld full"><span>原因（可选，会显示给该玩家）</span></div>
+          <div class="drow">
+            <span class="btn warn"><svg class="i" style="width:14px;height:14px"><use href="#i-out"/></svg>踢出</span>
+            <span class="btn bad solid"><svg class="i" style="width:14px;height:14px"><use href="#i-ban"/></svg>封禁</span>
+            <span class="btn bad"><svg class="i" style="width:14px;height:14px"><use href="#i-globe"/></svg>封 IP</span>
+          </div>
+          <div class="hint">每项都会先弹窗确认。封 IP 会影响同一网络下的所有人。</div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+</div>
+</body>
+</html>
