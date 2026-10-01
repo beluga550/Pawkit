@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, within } from "@testing-library/svelte";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import App from "./App.svelte";
 import { PROFILE_KEY } from "./lib/session.svelte.js";
 import { PREFS_KEY } from "./lib/prefs.svelte.js";
@@ -103,5 +103,89 @@ describe("shell", () => {
     await settle();
     await fireEvent.click(screen.getByRole("button", { name: "关闭通知" }));
     expect(screen.queryByText("结果未知 · 踢出 Steve")).toBeNull();
+  });
+});
+
+describe("end-to-end flow (migrated from tests/ui-smoke.mjs)", () => {
+  afterEach(() => vi.useRealTimers());
+
+  it("connects, broadcasts, teleports with cancel and confirm, and survives a dropped link", async () => {
+    vi.useFakeTimers();
+    const api = fakeApi();
+    api.server.reply = (action) => (action.type === "broadcast" ? "Broadcast sent" : "Teleported");
+    const { backend } = start({ api });
+    await connect();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("2 / 20");
+
+    // Broadcast: no confirmation.
+    await fireEvent.input(screen.getByLabelText("广播内容"), { target: { value: "Hello players" } });
+    await fireEvent.click(screen.getByRole("button", { name: "发送" }));
+    await settle();
+    expect(api.perform).toHaveBeenCalledWith({ type: "broadcast", message: "Hello players" });
+
+    // Player-to-player teleport: cancel first, nothing is sent.
+    await fireEvent.click(screen.getByRole("button", { name: /Steve/ }));
+    await fireEvent.click(screen.getByRole("tab", { name: "到玩家" }));
+    await fireEvent.change(screen.getByLabelText("目标玩家"), { target: { value: "Alex" } });
+    await fireEvent.click(screen.getByRole("button", { name: "传送到 Alex" }));
+    await fireEvent.click(screen.getByRole("button", { name: "取消" }), { detail: 1 });
+    await settle();
+    expect(api.perform).toHaveBeenCalledTimes(1);
+
+    // ...then confirm.
+    await fireEvent.click(screen.getByRole("button", { name: "传送到 Alex" }));
+    await fireEvent.click(screen.getByRole("button", { name: "传送" }), { detail: 1 });
+    await settle();
+    expect(api.perform).toHaveBeenLastCalledWith({ type: "teleportToPlayer", player: "Steve", target: "Alex" });
+
+    // Coordinate teleport, confirmed with Enter.
+    await fireEvent.click(screen.getByRole("tab", { name: "到坐标" }));
+    await fireEvent.input(screen.getByLabelText("X"), { target: { value: "12.5" } });
+    await fireEvent.input(screen.getByLabelText("Y"), { target: { value: "64" } });
+    await fireEvent.input(screen.getByLabelText("Z"), { target: { value: "-30" } });
+    await fireEvent.click(screen.getByRole("button", { name: /传送到主世界/ }));
+    await fireEvent.keyDown(document.querySelector("dialog"), { key: "Enter" });
+    await settle();
+    expect(api.perform).toHaveBeenLastCalledWith({
+      type: "teleportToCoords",
+      player: "Steve",
+      dimension: "overworld",
+      x: 12.5,
+      y: 64,
+      z: -30,
+    });
+
+    // The link drops: the next poll enters reconnecting and disables actions.
+    api.server.online = false;
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(screen.getByRole("alert")).toHaveTextContent("连接中断");
+    expect(screen.getByRole("button", { name: "发送" })).toBeDisabled();
+
+    // It comes back on its own.
+    api.server.online = true;
+    await vi.advanceTimersByTimeAsync(15_000);
+    expect(screen.queryByRole("alert")).toBeNull();
+    expect(screen.getByRole("button", { name: "发送" })).toBeEnabled();
+
+    // Nothing was re-sent, history has the outputs, and the password never hit storage.
+    expect(api.perform).toHaveBeenCalledTimes(3);
+    const history = JSON.parse(backend.map.get("pawkit.history.v1"));
+    expect(history.some(({ action, output }) => action.includes("广播") && output === "Broadcast sent")).toBe(true);
+    expect(history.some(({ action, output }) => action.includes("传送") && output === "Teleported")).toBe(true);
+    expect([...backend.map.values()].some((value) => value.includes("secret"))).toBe(false);
+  });
+
+  it("an unknown result stays on screen and is never retried", async () => {
+    vi.useFakeTimers();
+    const api = fakeApi();
+    start({ api });
+    await connect();
+    api.server.failNext = { kind: "unknown", message: "命令可能已经送达，但没有收到完整回复" };
+    await fireEvent.input(screen.getByLabelText("广播内容"), { target: { value: "hi" } });
+    await fireEvent.click(screen.getByRole("button", { name: "发送" }));
+    await settle();
+    await vi.advanceTimersByTimeAsync(60_000);
+    expect(screen.getByText("结果未知 · 广播：hi")).toBeInTheDocument();
+    expect(api.perform).toHaveBeenCalledTimes(1);
   });
 });
