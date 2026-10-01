@@ -1,6 +1,7 @@
 mod action;
 mod error;
 mod map;
+mod parse;
 mod server;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
