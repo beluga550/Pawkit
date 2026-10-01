@@ -1,0 +1,26 @@
+{
+  "player": {
+    "valid": ["Steve", "Kai_Builds", "abc", "ABCDEFGHIJKLMNOP", "___", "123"],
+    "invalid": ["", "ab", "ABCDEFGHIJKLMNOPQ", "@a", "@p[limit=1]", "Steve stop", " Steve", "Steve\nstop", "Steve;op", "Stéve", "史蒂夫", "1.2.3.4", "Ste-ve"]
+  },
+  "message": {
+    "valid": ["hello", "  padded  ", "今晚 8 点开活动", "@a 你好", { "repeat": "x", "times": 256 }, { "repeat": "😀", "times": 256 }],
+    "invalid": ["", "   ", "line\nbreak", "tab\there", "nul\u0000end", { "repeat": "x", "times": 257 }, { "repeat": "😀", "times": 257 }]
+  },
+  "reason": {
+    "valid": ["", "   ", "恶意破坏", "griefing spawn", { "repeat": "x", "times": 100 }, { "repeat": "😀", "times": 100 }],
+    "invalid": ["two\nlines", "bell\u0007", { "repeat": "x", "times": 101 }, { "repeat": "😀", "times": 101 }]
+  },
+  "ip": {
+    "valid": ["192.168.1.10", "0.0.0.0", "255.255.255.255", "::1", "2001:db8::1", "::ffff:192.0.2.1", "fe80::1"],
+    "invalid": ["", "192.168.1", "256.1.1.1", "1.2.3.4:25565", "01.2.3.4", "localhost", " 1.2.3.4", "1.2.3.4 ", "fe80::1%eth0", "Steve"]
+  },
+  "serverName": {
+    "valid": ["生存一服", "  有空格  ", { "repeat": "服", "times": 60 }],
+    "invalid": ["", "   ", { "repeat": "服", "times": 61 }]
+  },
+  "coordinate": {
+    "valid": [0, -30, 12.5, 64, 29999984, -29999984, 29999983.5],
+    "invalid": [29999984.5, -29999985, 30000000, 1e308]
+  }
+}

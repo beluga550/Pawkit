@@ -1,3 +1,5 @@
+mod action;
+mod error;
 mod map;
 mod server;
 
