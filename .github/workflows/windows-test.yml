@@ -16,8 +16,16 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: src-tauri -> target
-      - name: Check frontend JavaScript
-        run: node --check src/main.js && node --test tests/ui-smoke.mjs
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install frontend dependencies
+        run: npm ci
+      - name: Test frontend
+        run: npm test
+      - name: Build frontend
+        run: npm run build
       - name: Test Rust code
         run: cargo test --manifest-path src-tauri/Cargo.toml --locked
       - name: Install Tauri CLI

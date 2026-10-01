@@ -1,0 +1,221 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  background: var(--bg);
+}
+
+body {
+  font-family: var(--ui);
+  font-size: 13.5px;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+}
+
+:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 2px;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.kicker {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  color: var(--mint);
+  font-weight: 700;
+}
+
+.muted {
+  color: var(--text-3);
+}
+
+.mono {
+  font-family: var(--mono);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: var(--radius-control);
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  background: transparent;
+  white-space: nowrap;
+  transition: transform 0.12s, background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+.btn:disabled {
+  opacity: 0.45;
+}
+.btn.full {
+  width: 100%;
+}
+.btn.icon {
+  width: 36px;
+  padding: 0;
+}
+.btn.ghost {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: var(--line-2);
+  color: var(--text-2);
+}
+.btn.ghost:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+}
+.btn.primary {
+  background: linear-gradient(180deg, #a6efcd, #74dcae);
+  color: #05231a;
+  box-shadow: 0 8px 20px -10px rgba(116, 220, 174, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.btn.primary:hover:not(:disabled) {
+  box-shadow: 0 10px 26px -10px rgba(116, 220, 174, 0.95), inset 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+.btn.warn {
+  background: rgba(243, 197, 110, 0.08);
+  color: var(--amber);
+  border-color: rgba(243, 197, 110, 0.25);
+}
+.btn.bad {
+  background: rgba(255, 143, 126, 0.1);
+  color: var(--coral);
+  border-color: rgba(255, 143, 126, 0.3);
+}
+.btn.bad.solid {
+  background: linear-gradient(180deg, #ff9d8e, #f07a67);
+  color: #2b0b06;
+  border-color: transparent;
+}
+
+/* Form controls */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-2);
+}
+.input {
+  width: 100%;
+  height: 38px;
+  padding: 0 12px;
+  border-radius: var(--radius-control);
+  background: rgba(0, 0, 0, 0.25);
+  border: 1px solid var(--line-2);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.input::placeholder {
+  color: var(--text-3);
+}
+.input:focus {
+  border-color: rgba(142, 230, 190, 0.45);
+  box-shadow: 0 0 0 4px var(--mint-glow);
+}
+.input[aria-invalid="true"] {
+  border-color: rgba(255, 143, 126, 0.55);
+}
+.input[type="number"] {
+  appearance: textfield;
+  font-family: var(--mono);
+}
+.input::-webkit-outer-spin-button,
+.input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+.field-error {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--coral);
+}
+
+/* Surfaces */
+.panel {
+  background: rgba(17, 30, 35, 0.6);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+}
+
+/* Status tags */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tag.ok {
+  color: var(--mint);
+  background: rgba(142, 230, 190, 0.1);
+}
+.tag.unk {
+  color: var(--amber);
+  background: rgba(243, 197, 110, 0.1);
+}
+.tag.err {
+  color: var(--coral);
+  background: rgba(255, 143, 126, 0.1);
+}
+
+/* Busy spinner for icons inside buttons */
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+}

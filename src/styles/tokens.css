@@ -1,0 +1,25 @@
+:root {
+  --bg: #060b0e;
+  --s1: #0a1216;
+  --s2: #0d171b;
+  --card: #111e23;
+  --card-hi: #16262d;
+  --line: rgba(255, 255, 255, 0.055);
+  --line-2: rgba(255, 255, 255, 0.1);
+  --text: #e8f3ef;
+  --text-2: #9fb5ad;
+  --text-3: #66807a;
+  --mint: #8ee6be;
+  --mint-2: #4fcf97;
+  --mint-glow: rgba(142, 230, 190, 0.16);
+  --amber: #f3c56e;
+  --coral: #ff8f7e;
+  --over: #7fdc8f;
+  --nether: #ff7152;
+  --end: #b893ff;
+  --radius: 14px;
+  --radius-control: 10px;
+  --ui: "Segoe UI Variable Text", "Segoe UI", "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  --display: "Segoe UI Variable Display", "Segoe UI", "Microsoft YaHei UI", system-ui, sans-serif;
+  --mono: "Cascadia Code", "Cascadia Mono", Consolas, monospace;
+}
