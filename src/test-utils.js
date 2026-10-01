@@ -91,3 +91,11 @@ export function testApp({ api = fakeApi(), backend = memoryBackend() } = {}) {
 export function renderInApp(Component, props = {}, app = testApp()) {
   return { app, ...render(Component, { props, context: appContext(app) }) };
 }
+
+export const TEST_PROFILE = { name: "生存一服", host: "192.168.1.10", port: 25575 };
+
+export async function connectedApp(api = fakeApi()) {
+  const app = testApp({ api });
+  await app.session.connect(TEST_PROFILE, "secret");
+  return app;
+}
