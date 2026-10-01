@@ -1,6 +1,6 @@
 [package]
 name = "pawkit"
-version = "0.1.0"
+version = "0.2.0"
 description = "Minecraft server controls for a single server owner"
 edition = "2021"
 
