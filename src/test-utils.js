@@ -1,4 +1,7 @@
+import { render } from "@testing-library/svelte";
 import { vi } from "vitest";
+import { createApp } from "./lib/app.js";
+import { appContext } from "./lib/context.js";
 
 /** In-memory stand-in for localStorage. `map` exposes the raw stored strings. */
 export function memoryBackend(initial = {}) {
@@ -78,4 +81,13 @@ export function deferred() {
 /** Let pending promise callbacks run (works with fake timers too). */
 export async function settle() {
   for (let index = 0; index < 10; index += 1) await Promise.resolve();
+}
+
+export function testApp({ api = fakeApi(), backend = memoryBackend() } = {}) {
+  return createApp({ api, backend });
+}
+
+/** Render a component that calls useApp(). */
+export function renderInApp(Component, props = {}, app = testApp()) {
+  return { app, ...render(Component, { props, context: appContext(app) }) };
 }
