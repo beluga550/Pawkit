@@ -95,5 +95,8 @@ export async function executeOperation({ session, confirmer }, action) {
   if (session.status !== "connected" || session.pending) return { ok: false, skipped: true };
   const { label, confirm } = describe(action);
   if (confirm && !(await confirmer.ask(confirm))) return { ok: false, cancelled: true };
-  return session.run(action, label);
+  const result = await session.run(action, label);
+  // The state may have changed while the dialog was open; never drop a confirmed action silently.
+  if (confirm && result.skipped) session.notSent(label);
+  return result;
 }

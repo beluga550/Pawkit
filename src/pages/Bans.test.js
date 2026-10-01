@@ -93,3 +93,20 @@ describe("ip bans", () => {
     expect(app.api.perform).toHaveBeenCalledWith({ type: "banIp", target: "198.51.100.4", reason: "刷屏" });
   });
 });
+
+describe("load failures", () => {
+  it("shows a failure instead of loading forever and reloads after recovery", async () => {
+    const api = fakeApi();
+    api.server.bans = PARSED;
+    const app = await connectedApp(api);
+    api.server.online = false;
+    renderInApp(Bans, {}, app);
+    await settle();
+    expect(screen.queryByText(/正在读取/)).toBeNull();
+    expect(screen.getByText(/读取失败/)).toBeInTheDocument();
+    api.server.online = true;
+    await app.session.refreshPlayers();
+    await settle();
+    expect(screen.getByText("Griefer99")).toBeInTheDocument();
+  });
+});

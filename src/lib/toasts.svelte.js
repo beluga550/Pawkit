@@ -12,7 +12,13 @@ export function createToasts({ timers = globalThis } = {}) {
 
   function push({ tone, title, detail = "" }) {
     const id = nextId++;
-    items = [...items, { id, tone, title, detail }].slice(-MAX_TOASTS);
+    const next = [...items, { id, tone, title, detail }];
+    while (next.length > MAX_TOASTS) {
+      // Drop the oldest toast that may disappear; "unknown" ones must stay until closed.
+      const index = next.findIndex((toast) => toast.tone !== "unknown");
+      next.splice(index === -1 ? 0 : index, 1);
+    }
+    items = next;
     const lifetime = LIFETIME_MS[tone];
     if (lifetime) timers.setTimeout(() => dismiss(id), lifetime);
     return id;

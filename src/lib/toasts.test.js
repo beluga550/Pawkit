@@ -27,3 +27,11 @@ it("keeps at most five toasts", () => {
   for (let index = 0; index < 7; index += 1) toasts.push({ tone: "unknown", title: `t${index}` });
   expect(toasts.items.map((toast) => toast.title)).toEqual(["t2", "t3", "t4", "t5", "t6"]);
 });
+
+it("never evicts an unknown-result toast to make room", () => {
+  const toasts = createToasts();
+  toasts.push({ tone: "unknown", title: "结果未知 · 踢出 Steve" });
+  for (let index = 0; index < 6; index += 1) toasts.push({ tone: "ok", title: `ok${index}` });
+  expect(toasts.items).toHaveLength(5);
+  expect(toasts.items[0].title).toBe("结果未知 · 踢出 Steve");
+});

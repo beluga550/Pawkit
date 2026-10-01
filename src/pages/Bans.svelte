@@ -12,6 +12,7 @@
 
   let tab = $state("players");
   let data = $state(null);
+  let loadFailed = $state(false);
   let manualName = $state("");
   let banTarget = $state("");
   let banReason = $state("");
@@ -24,12 +25,14 @@
   async function load(manual = false) {
     const result = await session.query("bans", { manual, label: "刷新封禁名单" });
     if (result) data = result;
+    loadFailed = !result;
   }
 
   // Load on open, and again whenever a ban or pardon gets a server reply.
   $effect(() => {
     session.revisions.bans;
-    untrack(() => load());
+    // Also reload when the connection comes back, so a failed first load recovers.
+    if (session.status === "connected") untrack(() => load());
   });
 
   const run = (action) => executeOperation(app, action);
@@ -71,7 +74,9 @@
 </div>
 
 <section class="panel body">
-  {#if !data}
+  {#if !data && loadFailed}
+    <p class="muted">读取失败。连接恢复后会自动重试，也可以点右上角的刷新按钮。</p>
+  {:else if !data}
     <p class="muted">正在读取封禁名单…</p>
   {:else if list === null}
     <p class="notice">

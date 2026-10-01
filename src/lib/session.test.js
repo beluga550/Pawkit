@@ -225,3 +225,13 @@ describe("queries and helpers", () => {
     expect(session.status).toBe("connected");
   });
 });
+
+describe("not sent", () => {
+  it("records and announces a confirmed action that was never sent", async () => {
+    const { history, toasts, session } = setup();
+    await session.connect(PROFILE, "secret");
+    session.notSent("封禁 Steve");
+    expect(history.entries.at(-1)).toMatchObject({ action: "封禁 Steve", status: "error" });
+    expect(toasts.items.at(-1)).toMatchObject({ tone: "error", title: "未执行 · 封禁 Steve" });
+  });
+});

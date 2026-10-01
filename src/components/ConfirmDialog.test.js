@@ -70,3 +70,19 @@ it("a new request cancels the previous one", async () => {
   expect(await first).toBe(false);
   expect(confirmer.request.title).toBe("确认封禁");
 });
+
+it("Enter on the focused Cancel button cancels even a normal action", async () => {
+  const { answer } = open(NORMAL);
+  await fireEvent.keyDown(screen.getByRole("button", { name: "取消" }), { key: "Enter" });
+  expect(await answer).toBe(false);
+});
+
+it("ignores auto-repeated Enter so holding the key cannot confirm", async () => {
+  const { answer, dialog } = open(NORMAL);
+  let settled = false;
+  answer.then(() => (settled = true));
+  await fireEvent.keyDown(dialog, { key: "Enter", repeat: true });
+  await Promise.resolve();
+  expect(settled).toBe(false);
+  expect(dialog.open).toBe(true);
+});

@@ -13,6 +13,7 @@
   const { session } = app;
 
   let data = $state(null);
+  let loadFailed = $state(false);
   let name = $state("");
   let error = $state("");
   const ready = $derived(session.status === "connected" && !session.pending);
@@ -20,11 +21,13 @@
   async function load(manual = false) {
     const result = await session.query("whitelist", { manual, label: "刷新白名单" });
     if (result) data = result;
+    loadFailed = !result;
   }
 
   $effect(() => {
     session.revisions.whitelist;
-    untrack(() => load());
+    // Also reload when the connection comes back, so a failed first load recovers.
+    if (session.status === "connected") untrack(() => load());
   });
 
   const run = (action) => executeOperation(app, action);
@@ -64,7 +67,9 @@
 </form>
 
 <section class="panel body">
-  {#if !data}
+  {#if !data && loadFailed}
+    <p class="muted">读取失败。连接恢复后会自动重试，也可以点右上角的刷新按钮。</p>
+  {:else if !data}
     <p class="muted">正在读取白名单…</p>
   {:else if data.players.length === 0}
     <p class="muted">白名单里还没有玩家。</p>

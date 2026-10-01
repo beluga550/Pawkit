@@ -23,8 +23,10 @@
   function onkeydown(event) {
     if (event.key !== "Enter") return;
     event.preventDefault();
-    // Normal: Enter confirms. Danger: Enter always cancels.
-    confirmer.answer(!danger);
+    // Holding Enter must never confirm: ignore auto-repeat.
+    if (event.repeat) return;
+    // Normal: Enter confirms unless Cancel has focus. Danger: Enter always cancels.
+    confirmer.answer(!danger && event.target !== cancelButton);
   }
 
   function onConfirmClick(event) {

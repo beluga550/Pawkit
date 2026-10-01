@@ -160,6 +160,13 @@ export function createSession({ api, storage, history, toasts, timers = globalTh
     }
   }
 
+  /** The user confirmed an action but it could not be sent (link dropped or busy). */
+  function notSent(label) {
+    const detail = "连接中断或另一个操作正在执行，这次操作没有发出。";
+    history.record(label, "error", detail);
+    toasts.push({ tone: "error", title: `未执行 · ${label}`, detail });
+  }
+
   async function query(type, { manual = false, label = "" } = {}) {
     if (status === "disconnected") return null;
     const current = generation;
@@ -228,6 +235,7 @@ export function createSession({ api, storage, history, toasts, timers = globalTh
     reconnect,
     refreshPlayers,
     run,
+    notSent,
     query,
     isOnline(name) {
       const wanted = String(name).toLowerCase();

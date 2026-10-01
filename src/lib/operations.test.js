@@ -83,3 +83,17 @@ group("executeOperation", () => {
     expect(context.confirmer.ask).not.toHaveBeenCalled();
   });
 });
+
+group("confirmed but not sent", () => {
+  it("reports an action that could not run after the user confirmed it", async () => {
+    const session = {
+      status: "connected",
+      pending: null,
+      run: vi.fn(async () => ({ ok: false, skipped: true })),
+      notSent: vi.fn(),
+    };
+    const confirmer = { ask: vi.fn(async () => true) };
+    await executeOperation({ session, confirmer }, { type: "ban", player: "Steve", reason: null });
+    expect(session.notSent).toHaveBeenCalledWith("封禁 Steve");
+  });
+});

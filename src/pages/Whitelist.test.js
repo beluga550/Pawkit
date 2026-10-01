@@ -1,5 +1,5 @@
 import { fireEvent, screen, within } from "@testing-library/svelte";
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import Whitelist from "./Whitelist.svelte";
 import { connectedApp, fakeApi, renderInApp, settle } from "../test-utils.js";
 
@@ -62,4 +62,21 @@ it("records a manual refresh", async () => {
   await fireEvent.click(screen.getByRole("button", { name: "刷新白名单" }));
   await settle();
   expect(app.history.entries.at(-1).action).toBe("刷新白名单");
+});
+
+describe("load failures", () => {
+  it("shows a failure instead of loading forever and reloads after recovery", async () => {
+    const api = fakeApi();
+    api.server.whitelist = { output: "There are 1 whitelisted player(s): Kai_Builds", players: ["Kai_Builds"] };
+    const app = await connectedApp(api);
+    api.server.online = false;
+    renderInApp(Whitelist, {}, app);
+    await settle();
+    expect(screen.queryByText(/正在读取/)).toBeNull();
+    expect(screen.getByText(/读取失败/)).toBeInTheDocument();
+    api.server.online = true;
+    await app.session.refreshPlayers();
+    await settle();
+    expect(screen.getByText("Kai_Builds")).toBeInTheDocument();
+  });
 });
