@@ -1,4 +1,5 @@
 <script>
+  import { untrack } from "svelte";
   import ConfirmDialog from "./components/ConfirmDialog.svelte";
   import Shell from "./components/Shell.svelte";
   import Toasts from "./components/Toasts.svelte";
@@ -6,7 +7,8 @@
   import Connect from "./pages/Connect.svelte";
 
   let { app } = $props();
-  setApp(app);
+  // `app` is created once in main.js and never replaced.
+  setApp(untrack(() => app));
 
   $effect(() => app.session.start());
 

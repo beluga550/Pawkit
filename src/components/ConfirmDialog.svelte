@@ -68,6 +68,8 @@
 
 <style>
   dialog {
+    /* base.css resets margins; modal dialogs need auto margins to center. */
+    margin: auto;
     width: min(440px, calc(100vw - 32px));
     padding: 22px;
     border-radius: 16px;
